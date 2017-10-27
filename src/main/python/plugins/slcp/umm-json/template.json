@@ -1,0 +1,274 @@
+{
+"Projects": [
+{% for i in range(docs[0]['Campaign-ShortName']|count)  %}
+{
+"ShortName" : {{ docs[0]['Campaign-ShortName'][i] | jsonify }},
+"LongName" : {{ docs[0]['Campaign-LongName'][i] | jsonify }}
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+],
+{% if docs[0]['Spatial-Geometry'] %}
+"SpatialExtent" : {
+"SpatialCoverageType" : "HORIZONTAL",
+"HorizontalSpatialDomain" : {
+"Geometry" : {
+"CoordinateSystem" : {{ docs[0]['CoordinateSystem'] | jsonify }},
+"BoundingRectangles" : [
+{% for box in docs[0]['Spatial-Box']  %}
+{
+"WestBoundingCoordinate" : {{ box.split()[1] }},
+"NorthBoundingCoordinate" : {{ box.split()[2] }},
+"EastBoundingCoordinate" : {{ box.split()[3] }},
+"SouthBoundingCoordinate" : {{ box.split()[0] }}
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+]
+}
+},
+"GranuleSpatialRepresentation" : {{ docs[0]['CoordinateSystem'] | jsonify }}
+},
+{% endif %}
+"Distributions" : [ {
+"DistributionFormat" : {{ docs[0]['DataFormat'] | jsonify }}
+} ],
+{% if docs[0]['CategoryKeyword'] %}
+"ScienceKeywords" : [
+{% for i in range(docs[0]['CategoryKeyword']|count)  %}
+{
+"Category" : {{ docs[0]['CategoryKeyword'][i] | jsonify }},
+"Topic" : {{ docs[0]['TopicKeyword'][i] | jsonify }},
+"Term" : {{ docs[0]['TermKeyword'][i] | jsonify }},
+"VariableLevel1" : {{ docs[0]['VariableLevel1Keyword'][i] | jsonify }}
+{% if docs[0]['DetailedVariableKeyword'] %}
+,"DetailedVariable" : {{ docs[0]['DetailedVariableKeyword'][i] | jsonify }}
+{% endif %}
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+],
+{% endif %}
+"TemporalExtents" : [ {
+ "RangeDateTimes" : [
+{% for dt in docs[0]['BeginningEndingDateTime']  %}
+{
+{% if ' ' not in dt %}
+"BeginningDateTime" : "{{ dt }}",
+"EndingDateTime" : "{{ dt }}"
+{% else %}
+"BeginningDateTime" : "{{ dt[1:dt.index(' ')] }}"
+{% if '*' not in dt %}
+,
+"EndingDateTime" : "{{ dt[dt.rindex(' ')+1:-1] }}"
+{% endif %}
+{% endif %}
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+]
+} ],
+"ProcessingLevel" : {
+"Id" : {{ docs[0]['ProcessingLevelId'] | jsonify }}
+},
+"ShortName" : {{ docs[0]['ShortName'] | jsonify }},
+"EntryTitle" : {{ docs[0]['LongName'] | jsonify }},
+"RelatedUrls" : [
+{% for i in range(docs[0]['OnlineAccessURL-URL']|count)  %}
+{
+"Description" : {{ docs[0]['OnlineAccessURL-URLDescription'][i] | jsonify }},
+"Relation" : [ "GET DATA" ],
+"URLs" : [ {{ docs[0]['OnlineAccessURL-URL'][i] | jsonify }} ]
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+{% if docs[0]['OnlineResource-URL'] %}
+,
+{% endif %}
+{% for i in range(docs[0]['OnlineResource-URL']|count)  %}
+{
+{% if docs[0]['OnlineResource-Description'][i] != '' %}
+"Description" : {{ docs[0]['OnlineResource-Description'][i] | jsonify }},
+{% endif %}
+"URLs" : [ {{ docs[0]['OnlineResource-URL'][i] | jsonify }} ]
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+],
+"DataDates" : [ {
+"Date" : "{{ docs[0]['LastUpdate'] }}",
+"Type" : "UPDATE"
+} ],
+"Abstract" : {{ docs[0]['Description'] | jsonify }},
+"Version" : {{ docs[0]['VersionId'] | jsonify }},
+"LocationKeywords" : [
+{% for keyword in docs[0]['SpatialKeywords-Keyword']  %}
+{
+"Category": "GEOGRAPHIC REGION",
+ "Type": {{ keyword | jsonify }}
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+],
+"Platforms" : [
+{% for i in range(docs[0]['Platform-ShortName']|count)  %}
+{
+"Type" : "SPACECRAFT",
+"ShortName" : {{ docs[0]['Platform-ShortName'][i] | jsonify }},
+"LongName" : {{ docs[0]['Platform-LongName'][i] | jsonify }}
+{% if docs[0]['Instrument-ShortName_' + i|string] %}
+,
+"Instruments" : [
+{% for j in range(docs[0]['Instrument-ShortName_' + i|string]|count)  %}
+{
+"ShortName" : {{ docs[0]['Instrument-ShortName_' + i|string][j] | jsonify }},
+"LongName" : {{ docs[0]['Instrument-LongName_' + i|string][j] | jsonify }}
+{% if docs[0]['Sensor-ShortName_' + i|string + '_' + j|string] %}
+,
+"Sensors" : [
+{% for k in range(docs[0]['Sensor-ShortName_' + i|string + '_' + j|string]|count)  %}
+{
+"ShortName" : {{ docs[0]['Sensor-ShortName_' + i|string + '_' + j|string][k] | jsonify }},
+"LongName" : {{ docs[0]['Sensor-LongName_' + i|string + '_' + j|string][k] | jsonify }}
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+]
+{% endif %}
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+]
+{% endif %}
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+]
+{% if docs[0]['DOI'] %}
+,
+"DOI" : {"DOI" : {{ docs[0]['DOI'] | jsonify }}}
+{% endif %}
+,
+"AncillaryKeywords" : [
+{% for keyword in docs[0]['Keyword']  %}
+{{ keyword | jsonify }}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+],
+"DataCenters": [
+{% if docs[0]['ProcessingCenter'] %}
+{
+"Roles": ["PROCESSOR"],
+"ShortName": {{ docs[0]['ProcessingCenter'] | jsonify }}
+}
+{% endif %}
+{% if docs[0]['ArchiveCenter'] %}
+{% if docs[0]['ProcessingCenter'] %}
+,
+{% endif %}
+{
+"Roles": ["ARCHIVER"],
+"ShortName": {{ docs[0]['ArchiveCenter'] | jsonify }}
+}
+{% endif %}
+],
+{% if docs[0]['LatitudeResolution'] %}
+"GeographicCoordinateSystemType" : {
+"GeographicCoordinateUnits" : "degrees",
+"LatitudeResolution" : {{ docs[0]['LatitudeResolution'] }},
+"LongitudeResolution" : {{ docs[0]['LongitudeResolution'] }}
+},
+{% endif %}
+{% if docs[0]['TemporalResolution'] %}
+"TemporalKeywords" : [
+{{ docs[0]['TemporalResolution'] | jsonify }}
+],
+{% endif %}
+"MetadataAssociations":[
+{% for i in range(docs[0]['CollectionAssociation-ShortName']|count)  %}
+{
+"EntryId": {{ docs[0]['CollectionAssociation-ShortName'][i] | jsonify }},
+"Description": {{ docs[0]['CollectionAssociation-CollectionUse'][i] | jsonify }},
+"Type": {{ docs[0]['CollectionAssociation-CollectionType'][i] | jsonify }},
+"Version": {{ docs[0]['CollectionAssociation-VersionId'][i] | jsonify }},
+"EntryTitle": {{ docs[0]['CollectionAssociation-LongName'][i] | jsonify }}
+{% if 'CollectionAssociation-URL' in docs[0] %}
+,"URL": {{ docs[0]['CollectionAssociation-URL'][i] | jsonify }}
+{% endif %}
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+],
+"PublicationReferences":[
+{% set publicationKeys = {"PublicationReferences-Title": "Title", "PublicationReferences-Publisher": "Publisher", "PublicationReferences-Author": "Author", "PublicationReferences-PublicationDate": "PublicationDate", "PublicationReferences-Series": "Series", "PublicationReferences-Edition": "Edition", "PublicationReferences-Volume": "Volume", "PublicationReferences-Issue": "Issue", "PublicationReferences-ReportNumber": "ReportNumber", "PublicationReferences-PublicationPlace": "PublicationPlace", "PublicationReferences-Pages": "Pages", "PublicationReferences-ISBN": "ISBN", "PublicationReferences-OtherReferenceDetails": "OtherReferenceDetails"} %}
+{% for i in range(docs[0]['PublicationReferences-Title']|count)  %}
+{
+{% for key, value in publicationKeys.iteritems() %}
+"{{ value }}": {{ docs[0][key][i].strip() | jsonify }},
+{% endfor %}
+"DOI": {"DOI" : {{ docs[0]['PublicationReferences-DOI'][i] | jsonify}} }
+}
+{% if not loop.last %}
+,
+{% endif %}
+{% endfor %}
+],
+"AdditionalAttributes" : [
+{% set hasAttrs = False %}
+{% if docs[0]['NexusDataBeginningDateTime'] %}
+{% set hasAttrs = True %}
+{"Name": "NexusDataBeginningDateTime", "Description": "Beginning date of data available in Nexus", "DataType": "DATETIME", "Value": "{{ docs[0]['NexusDataBeginningDateTime'] }}"}
+{% endif %}
+{% if docs[0]['NexusDataEndingDateTime'] %}
+{% if hasAttrs %},{% endif %}
+{% set hasAttrs = True %}
+{"Name": "NexusDataEndingDateTime", "Description": "Ending date of data available in Nexus", "DataType": "DATETIME", "Value": "{{ docs[0]['NexusDataEndingDateTime'] }}"}
+{% endif %}
+{% if docs[0]['NexusShortName'] %}
+{% if hasAttrs %},{% endif %}
+{% set hasAttrs = True %}
+{"Name": "NexusShortName", "Description": "Name of dataset in Nexus", "DataType": "STRING", "Value": "{{ docs[0]['NexusShortName'][0] }}"}
+{% endif %}
+{% if docs[0]['LatitudeResolution'] %}
+{% if hasAttrs %},{% endif %}
+{% set hasAttrs = True %}
+{"Name": "Spatial Resolution", "Description": "Spatial resolution of dataset", "DataType": "STRING", "Value": "{{docs[0]['LatitudeResolution']}} degrees (Latitude) x {{docs[0]['LongitudeResolution']}} degrees (Longitude)"}
+{% endif %}
+{% if docs[0]['AcrossTrackResolution'] %}
+{% if hasAttrs %},{% endif %}
+{% set hasAttrs = True %}
+{"Name": "Spatial Resolution", "Description": "Spatial resolution of dataset", "DataType": "STRING", "Value": "{{docs[0]['AlongTrackResolution'] / 1000 }} km (Along) x {{docs[0]['AcrossTrackResolution'] / 1000 }} km (Across)"}
+{% endif %}
+{% for key in ['GlobalAttrTitle', 'GlobalAttrDescription', 'GlobalAttrSource', 'GlobalAttrContact', 'GlobalAttrUnits'] %}
+{% if docs[0][key] %}
+{% if hasAttrs %},{% endif %}
+{% set hasAttrs = True %}
+{"Name": "{{ key }}", "DataType": "STRING", "Value": {{ docs[0][key] | jsonify }}}
+{% endif %}
+{% endfor %}
+]
+}
