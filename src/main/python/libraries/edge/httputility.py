@@ -9,6 +9,5 @@ class HttpUtility(object):
             request = tornado.httpclient.HTTPRequest(url, method='POST', headers=requestHeaders, request_timeout=30, body=body)
         else:
             request = tornado.httpclient.HTTPRequest(url, method='GET', headers=requestHeaders, request_timeout=30)
-
         httpClient = tornado.httpclient.AsyncHTTPClient()
         httpClient.fetch(request,callback=callback)
