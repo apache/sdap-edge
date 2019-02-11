@@ -19,7 +19,7 @@
 "wind_component_quality": {% if doc['wind_component_quality'] == False %}0{% elif doc['wind_component_quality'] == True %}1{% else %}9{% endif %},
 "sea_water_salinity": {{ doc['SSS'] | jsonify }},
 "sea_water_salinity_depth": {{ doc['SSS_depth'] | jsonify }},
-"sea_water_salinity_quality": {% if doc['SSS_quality'] == False %}0{% elif doc['SSS_quality'] == True %}1{% else %}0{% endif %},
+"sea_water_salinity_quality": {% if doc['SSS_quality'] == False %}0{% elif doc['SSS_quality'] == True %}1{% else %}9{% endif %},
 "platform": {{ doc['platform'] | jsonify }},
 "device": {{ doc['device'] | jsonify }},
 "mission": {{ doc['mission'] | jsonify }},
