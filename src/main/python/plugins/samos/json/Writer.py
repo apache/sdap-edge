@@ -61,6 +61,15 @@ class Writer(SolrTemplateResponseWriter):
                             filterQueries.append('(SST_depth:[*%20TO%20'+value+']+OR+(*:*%20NOT%20SST_depth:*))')
                         elif parameters['variable'].lower() == 'wind':
                             filterQueries.append('(wind_depth:[*%20TO%20'+value+']+OR+(*:*%20NOT%20wind_depth:*))')
+                elif key == "qualityFlag":
+                    if 'variable' in parameters:
+                        if parameters['variable'].lower() == 'sss':
+                            filterQueries.append('(sss_quality:[*%20TO%20'+value+'])')
+                        elif parameters['variable'].lower() == 'sst':
+                            filterQueries.append('(sst_quality:[*%20TO%20'+value+'])')
+                        elif parameters['variable'].lower() == 'wind':
+                            filterQueries.append('(wind_quality:[*%20TO%20'+value+'])')
+                            filterQueries.append('(wind_directon_quality:[*%20TO%20'+value+'])')
                 elif key == 'platform':
                     if type(value) is list:
                         filterQueries.append('platform:(' + '+OR+'.join(value) + ')')
