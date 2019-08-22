@@ -65,12 +65,11 @@ class Writer(SolrTemplateResponseWriter):
                 elif key == "qualityFlag":
                     if 'variable' in parameters:
                         if parameters['variable'].lower() == 'sss':
-                            filterQueries.append('(SSS_quality:[*%20TO%20'+value+'])')
+                            filterQueries.append('(sss_qc_flag:[*%20TO%20'+value+'])')
                         elif parameters['variable'].lower() == 'sst':
-                            filterQueries.append('(SST_quality:[*%20TO%20'+value+'])')
+                            filterQueries.append('(sst_qc_flag:[*%20TO%20'+value+'])')
                         elif parameters['variable'].lower() == 'wind':
-                            filterQueries.append('(wind_quality:[*%20TO%20'+value+'])')
-                            filterQueries.append('(wind_direction_quality:[*%20TO%20'+value+'])')
+                            filterQueries.append('(wind_qc_flag:[*%20TO%20'+value+'])')
                 elif key == 'platform':
                     if type(value) is list:
                         filterQueries.append('platform:(' + '+OR+'.join(value) + ')')
