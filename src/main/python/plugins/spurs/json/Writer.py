@@ -52,26 +52,6 @@ class Writer(SolrTemplateResponseWriter):
                     filterQueries.append('depth:['+value+'%20TO%20*]')
                 elif key == 'maxDepth':
                     filterQueries.append('depth:[*%20TO%20'+value+']')
-                # include data only at specified quality level and have default at good in UI
-                elif key == "qualityFlag":
-                    if 'variable' in parameters:
-                        if parameters['variable'].lower() == 'sss':
-                            if type(value) is list:
-                                filterQueries.append('(sss_qc_flag:(' + '+OR+'.join(value) + '))')
-                            else:
-                                filterQueries.append('(sss_qc_flag:(' + value + '))')
-                        elif parameters['variable'].lower() == 'sst':
-                            if type(value) is list:
-                                filterQueries.append('(sst_qc_flag:(' + '+OR+'.join(value) + '))')
-                            else:
-                                filterQueries.append('(sst_qc_flag:(' + value + '))')
-                        elif parameters['variable'].lower() == 'wind':
-                            if type(value) is list:
-                                filterQueries.append('(wind_speed_quality:(' + '+OR+'.join(value) + '))')
-                                filterQueries.append('(wind_component_quality:(' + '+OR+'.join(value) + '))')
-                            else:
-                                filterQueries.append('(wind_speed_quality:(' + value + '))')
-                                filterQueries.append('(wind_component_quality:(' + value + '))')
                 elif key == 'platform':
                     if type(value) is list:
                         filterQueries.append('platform:(' + '+OR+'.join(value) + ')')
