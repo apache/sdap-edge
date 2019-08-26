@@ -23,6 +23,10 @@ class Writer(SolrTemplateResponseWriter):
         return response.generate(solrResponse, pretty=pretty)
 
     def _constructSolrQuery(self, startIndex, entriesPerPage, parameters, facets):
+        # if no QC flag is given, default to only good
+        if not "qualityFlag" in parameters.keys():
+            parameters['qualityFlag'] = 1
+
         queries = []
         filterQueries = []
         sort = None
@@ -65,12 +69,22 @@ class Writer(SolrTemplateResponseWriter):
                 elif key == "qualityFlag":
                     if 'variable' in parameters:
                         if parameters['variable'].lower() == 'sss':
-                            filterQueries.append('(SSS_quality:[*%20TO%20'+value+'])')
+                            if type(value) is list:
+                                filterQueries.append('(SSS_quality:(' + '+OR+'.join(value) + '))')
+                            else:
+                                filterQueries.append('(SSS_quality:(' + value + '))')
                         elif parameters['variable'].lower() == 'sst':
-                            filterQueries.append('(SST_quality:[*%20TO%20'+value+'])')
+                            if type(value) is list:
+                                filterQueries.append('(SST_quality:(' + '+OR+'.join(value) + '))')
+                            else:
+                                filterQueries.append('(SST_quality:(' + value + '))')
                         elif parameters['variable'].lower() == 'wind':
-                            filterQueries.append('(wind_speed_quality:[*%20TO%20'+value+'])')
-                            filterQueries.append('(wind_component_quality:[*%20TO%20'+value+'])')
+                            if type(value) is list:
+                                filterQueries.append('(wind_speed_quality:(' + '+OR+'.join(value) + '))')
+                                filterQueries.append('(wind_component_quality:(' + '+OR+'.join(value) + '))')
+                            else:
+                                filterQueries.append('(wind_speed_quality:(' + value + '))')
+                                filterQueries.append('(wind_component_quality:(' + value + '))')
                 elif key == 'platform':
                     if type(value) is list:
                         filterQueries.append('platform:(' + '+OR+'.join(value) + ')')

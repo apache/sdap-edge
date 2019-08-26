@@ -23,6 +23,10 @@ class Writer(SolrTemplateResponseWriter):
         return response.generate(solrResponse, pretty=pretty)
 
     def _constructSolrQuery(self, startIndex, entriesPerPage, parameters, facets):
+        # if no QC flag is given, default to only good
+        if not "qualityFlag" in parameters.keys():
+            parameters['qualityFlag'] = 1
+
         queries = []
         filterQueries = []
         sort = None
@@ -65,11 +69,20 @@ class Writer(SolrTemplateResponseWriter):
                 elif key == "qualityFlag":
                     if 'variable' in parameters:
                         if parameters['variable'].lower() == 'sss':
-                            filterQueries.append('(sss_qc_flag:[*%20TO%20'+value+'])')
+                            if type(value) is list:
+                                filterQueries.append('(sss_qc_flag:(' + '+OR+'.join(value) + '))')
+                            else:
+                                filterQueries.append('(sss_qc_flag:('+value+'))')
                         elif parameters['variable'].lower() == 'sst':
-                            filterQueries.append('(sst_qc_flag:[*%20TO%20'+value+'])')
+                            if type(value) is list:
+                                filterQueries.append('(sst_qc_flag:(' + '+OR+'.join(value) + '))')
+                            else:
+                                filterQueries.append('(sst_qc_flag:('+value+'))')
                         elif parameters['variable'].lower() == 'wind':
-                            filterQueries.append('(wind_qc_flag:[*%20TO%20'+value+'])')
+                            if type(value) is list:
+                                filterQueries.append('(wind_qc_flag:(' + '+OR+'.join(value) + '))')
+                            else:
+                                filterQueries.append('(wind_qc_flag:(' + value + '))')
                 elif key == 'platform':
                     if type(value) is list:
                         filterQueries.append('platform:(' + '+OR+'.join(value) + ')')
