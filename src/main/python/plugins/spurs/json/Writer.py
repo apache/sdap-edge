@@ -26,6 +26,10 @@ class Writer(SolrTemplateResponseWriter):
     def _constructSolrQuery(self, startIndex, entriesPerPage, parameters, facets):
         variable = json.loads(self._configuration.get('solr', 'variable'))
 
+        # if no QC flag is given, default to only good
+        if not "qualityFlag" in parameters.keys():
+            parameters['qualityFlag'] = 1
+
         queries = []
         filterQueries = []
         sort = None
