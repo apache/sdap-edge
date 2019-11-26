@@ -40,13 +40,13 @@ class IsoResponseBySolr(IsoResponse):
                     self.variables['UniqueDatasetSensor'] = {}
                     for i, x in enumerate(doc['DatasetSource-Sensor-ShortName']):
                         self.variables['UniqueDatasetSensor'][x] = i
-                    self.variables['UniqueDatasetSensor'] = self.variables['UniqueDatasetSensor'].values()
+                    self.variables['UniqueDatasetSensor'] = list(self.variables['UniqueDatasetSensor'].values())
                     
                     # Create list of unique dataset source
                     self.variables['UniqueDatasetSource'] = {}
                     for i, x in enumerate(doc['DatasetSource-Source-ShortName']):
                         self.variables['UniqueDatasetSource'][x] = i
-                    self.variables['UniqueDatasetSource'] = self.variables['UniqueDatasetSource'].values()
+                    self.variables['UniqueDatasetSource'] = list(self.variables['UniqueDatasetSource'].values())
                     
                     # Replace all none, None values with empty string
                     doc['DatasetParameter-VariableDetail'] = [self._filterString(variableDetail) for variableDetail in doc['DatasetParameter-VariableDetail']]

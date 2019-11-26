@@ -38,7 +38,7 @@ class AtomResponse(Response):
 
         document = Document()
         feed = document.createElement('feed')
-        for namespace in self.namespaces.keys():
+        for namespace in list(self.namespaces.keys()):
             namespaceAttr = 'xmlns'
             if namespace != '':
                 namespaceAttr += ':'+namespace
@@ -141,5 +141,5 @@ class AtomResponse(Response):
             else:
                 variableElement.appendChild(document.createTextNode(xml.sax.saxutils.escape(str(value))))
         if 'attribute' in itemEntry:
-            for attr in itemEntry['attribute'].keys():
+            for attr in list(itemEntry['attribute'].keys()):
                 variableElement.setAttribute(attr, itemEntry['attribute'][attr])

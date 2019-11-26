@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
 from edge.response.solrjsontemplateresponse import SolrJsonTemplateResponse
@@ -28,10 +28,10 @@ class Writer(SolrTemplateResponseWriter):
         start = '*'
         end = '*'
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if value != "":
                 if key == 'keyword':
-                    queries.append(urllib.quote(value))
+                    queries.append(urllib.parse.quote(value))
                 elif key == 'ds':
                     filterQueries.append('datasetShortName:%s' % value)
                 elif key == 'startTime':

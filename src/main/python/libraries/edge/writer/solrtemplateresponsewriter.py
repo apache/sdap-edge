@@ -1,6 +1,6 @@
 from types import *
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 from collections import OrderedDict
 
@@ -58,7 +58,7 @@ class SolrTemplateResponseWriter(TemplateResponseWriter):
         facets = {}
         if self._configuration.has_option('solr', 'facets'):
             self.facetDefs = json.loads(self._configuration.get('solr', 'facets'), object_pairs_hook=OrderedDict)
-            for facet in self.facetDefs.keys():
+            for facet in list(self.facetDefs.keys()):
                 try:
                     value = requestHandler.get_arguments(facet)
                     if len(value) > 0:
@@ -73,7 +73,7 @@ class SolrTemplateResponseWriter(TemplateResponseWriter):
             logging.exception('Failed to get solr response.')
 
     def _urlEncodeSolrQueryValue(self, value):
-        return urllib.quote('"'+value+'"')
+        return urllib.parse.quote('"'+value+'"')
 
     def _onSolrResponse(self, response):
         logging.debug(response)

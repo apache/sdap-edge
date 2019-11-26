@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.estemplateresponsewriter import ESTemplateResponseWriter
 from edge.response.estemplateresponse import ESTemplateResponse
@@ -25,10 +25,10 @@ class Writer(ESTemplateResponseWriter):
         filterQueries = []
         sort = None
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if value != "":
                 if key == 'keyword':
-                    queries.append(urllib.quote(value))
+                    queries.append(urllib.parse.quote(value))
         if len(queries) == 0:
             queries.append('*')
 

@@ -1,5 +1,5 @@
 import datetime
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.opensearch.atomresponsebysolr import AtomResponseBySolr
 from edge.dateutility import DateUtility
@@ -32,12 +32,12 @@ class GranuleAtomResponse(AtomResponseBySolr):
         
         parameters = {'datasetId': doc['Dataset-PersistentId'][0], 'granuleName': doc['Granule-Name'][0]}
         parameters['full'] = 'true'
-        item.append({'name': 'link', 'attribute': {'href': self.url+self.searchBasePath + 'granule?' + urllib.urlencode(parameters), 'rel': 'enclosure', 'type': 'application/atom+xml', 'title': 'PO.DAAC Metadata' }})
+        item.append({'name': 'link', 'attribute': {'href': self.url+self.searchBasePath + 'granule?' + urllib.parse.urlencode(parameters), 'rel': 'enclosure', 'type': 'application/atom+xml', 'title': 'PO.DAAC Metadata' }})
         del parameters['full']
         parameters['format'] = 'iso'
-        item.append({'name': 'link', 'attribute': {'href': self.url+self.metadataBasePath + 'granule?' +  urllib.urlencode(parameters), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'ISO-19115 Metadata' }})
+        item.append({'name': 'link', 'attribute': {'href': self.url+self.metadataBasePath + 'granule?' +  urllib.parse.urlencode(parameters), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'ISO-19115 Metadata' }})
         parameters['format'] = 'fgdc'
-        item.append({'name': 'link', 'attribute': {'href': self.url+self.metadataBasePath + 'granule?' +  urllib.urlencode(parameters), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'FGDC Metadata' }})
+        item.append({'name': 'link', 'attribute': {'href': self.url+self.metadataBasePath + 'granule?' +  urllib.parse.urlencode(parameters), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'FGDC Metadata' }})
         
         #item.append({'name': 'description', 'value': doc['Dataset-Description'][0]})
         #item.append({'name': 'link', 'value': self.portalUrl+'/'+doc['Dataset-ShortName'][0]})

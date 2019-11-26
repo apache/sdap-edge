@@ -1,5 +1,5 @@
 import datetime
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.elasticsearch.opensearch.atomresponsebyelasticsearch import AtomResponseByElasticsearch
 from edge.dateutility import DateUtility
@@ -32,7 +32,7 @@ class GranuleAtomResponse(AtomResponseByElasticsearch):
         
         parameters = {'identifier': doc['_source']['identifier'], 'name': doc['_source']['name']}
         parameters['full'] = 'true'
-        item.append({'name': 'link', 'attribute': {'href': self.url+self.searchBasePath + 'granule?' + urllib.urlencode(parameters), 'rel': 'enclosure', 'type': 'application/atom+xml', 'title': 'GIBS Metadata' }})
+        item.append({'name': 'link', 'attribute': {'href': self.url+self.searchBasePath + 'granule?' + urllib.parse.urlencode(parameters), 'rel': 'enclosure', 'type': 'application/atom+xml', 'title': 'GIBS Metadata' }})
         del parameters['full']
         '''
         parameters['format'] = 'iso'

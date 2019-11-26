@@ -1,6 +1,6 @@
 import logging
-import urllib2
-import urlparse
+import urllib.request, urllib.error, urllib.parse
+import urllib.parse
 
 import requestresponder
 from edge.httputility import HttpUtility
@@ -63,7 +63,7 @@ class PassThroughWriter(requestresponder.RequestResponder):
             self.requestHandler.write(str(response.error))
             self.requestHandler.finish()
         else:
-            for name, value in response.headers.iteritems():
+            for name, value in response.headers.items():
                 logging.debug('header: '+name+':'+value)
                 self.requestHandler.set_header(name, value)
             self.requestHandler.set_header('Access-Control-Allow-Origin', '*')
@@ -81,7 +81,7 @@ class PassThroughWriter(requestresponder.RequestResponder):
             logging.debug('allow: '+value)
         """
 
-        segments = urlparse.urlparse(url)
+        segments = urllib.parse.urlparse(url)
         netlocation = segments.netloc
 
         targets = [netlocation]

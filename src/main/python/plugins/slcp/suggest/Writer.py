@@ -1,5 +1,5 @@
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.proxywriter import ProxyWriter
 
@@ -15,7 +15,7 @@ class Writer(ProxyWriter):
         #parameters['suggest.build'] = 'true'
         try:
             parameters['suggest.q'] = requestHandler.get_argument('keyword')
-            url += '/suggest?' + urllib.urlencode(parameters)
+            url += '/suggest?' + urllib.parse.urlencode(parameters)
         except:
             raise Exception('Missing keyword parameter.')
         logging.debug("proxy to url : " + url)

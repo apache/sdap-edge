@@ -22,7 +22,7 @@ class Writer(SolrTemplateResponseWriter):
     def _constructSolrQuery(self, startIndex, entriesPerPage, parameters, facets):
         queries = []
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if key == 'id':
                 queries.append('id:' + self._urlEncodeSolrQueryValue(value))
             elif key == 'slcpShortName':

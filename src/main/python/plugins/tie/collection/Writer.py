@@ -1,5 +1,5 @@
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.dateutility import DateUtility
 from edge.writer.proxywriter import ProxyWriter
@@ -49,6 +49,6 @@ class Writer(ProxyWriter):
         end = DateUtility.convertISOToUTCTimestamp(end) + 999
         parameters['fq'].append('time:[' + str(start) + ' TO ' + str(end) + ']')
 
-        url += '/select?' + urllib.urlencode(parameters, True)
+        url += '/select?' + urllib.parse.urlencode(parameters, True)
         logging.debug("proxy to url : " + url)
         return url

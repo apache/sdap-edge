@@ -5,7 +5,7 @@ import tornado.web
 import logging
 import logging.config
 import os
-import ConfigParser
+import configparser
 import socket
 
 import pluginhandler
@@ -53,7 +53,7 @@ if __name__ == "__main__":
     #logging.basicConfig(filename="log.txt",level=logging.DEBUG)
     logging.config.fileConfig(r'./logging.conf')
 
-    configuration = ConfigParser.RawConfigParser()
+    configuration = configparser.RawConfigParser()
     configuration.read(r'./config.conf')
 
     settings = dict(static_path=os.path.join(os.path.dirname(__file__), "static"), static_url_prefix="/static/", template_path=os.path.join(os.path.dirname(__file__), "templates"))

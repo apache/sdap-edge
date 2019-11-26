@@ -1,7 +1,7 @@
 from types import *
 import json
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 import requestresponder
 from edge.dateutility import DateUtility
@@ -111,7 +111,7 @@ class DatasetWriter(ResponseWriter):
         queries = []
         sort = None
         filterQuery = None
-        for key, value in variables.iteritems():
+        for key, value in variables.items():
             #query = ''
             if key == 'startTime':
                 startTime = DateUtility.convertISOToUTCTimestamp(value)
@@ -126,7 +126,7 @@ class DatasetWriter(ResponseWriter):
                     query += '[*%20TO%20'+str(stopTime)+']'
                     queries.append(query)
             elif key == 'keyword':
-                newValue = urllib.quote(value)
+                newValue = urllib.parse.quote(value)
 
                 query = newValue
                 queries.append(query)
@@ -153,7 +153,7 @@ class DatasetWriter(ResponseWriter):
                 queries.append(query)
             elif key == 'sortBy':
                 sortByMapping = {'timeDesc': 'start_time:desc', 'timeAsc': 'start_time:asc'}
-                if value in sortByMapping.keys():
+                if value in list(sortByMapping.keys()):
                     sort = sortByMapping[value]
             elif key == 'bbox':
                 filterQuery = self._constructBoundingBoxQuery(value)

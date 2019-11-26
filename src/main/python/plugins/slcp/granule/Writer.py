@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
@@ -30,10 +30,10 @@ class Writer(SolrTemplateResponseWriter):
         sort = None
         sortDir = 'asc'
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if value != "":
                 if key == 'keyword':
-                    queries.append(urllib.quote(value))
+                    queries.append(urllib.parse.quote(value))
                 elif key == 'startTime':
                     queries.append('EndingDateTime:['+value+'%20TO%20*]')
                 elif key == 'endTime':
@@ -44,12 +44,12 @@ class Writer(SolrTemplateResponseWriter):
                 elif key == 'shortName':
                     queries.append('ShortName:' + self._urlEncodeSolrQueryValue(value))
                 elif key == 'sortKey':
-                    if value in sortKeys.keys():
+                    if value in list(sortKeys.keys()):
                         sort = sortKeys[value]
                 elif key == 'sortDir':
                     sortDir = value
 
-        for key, value in facets.iteritems():
+        for key, value in facets.items():
             if type(value) is list:
                 if (len(value) == 1):
                     filterQueries.append(key + ':' + self._urlEncodeSolrQueryValue(value[0]))
@@ -68,11 +68,11 @@ class Writer(SolrTemplateResponseWriter):
         
         if self.facet:
             query += '&rows=0&facet=true&facet.limit=-1&facet.mincount=1&'
-            query += '&'.join(['facet.field=' + facet for facet in self.facetDefs.values()])
+            query += '&'.join(['facet.field=' + facet for facet in list(self.facetDefs.values())])
         else:
             query += '&start='+str(startIndex)+'&rows='+str(entriesPerPage)
             if sort is not None:
-                query += '&sort=' + urllib.quote(sort + ' ' + sortDir)
+                query += '&sort=' + urllib.parse.quote(sort + ' ' + sortDir)
 
         logging.debug('solr query: '+query)
 

@@ -1,6 +1,7 @@
 import os
 import sys
 import logging
+import importlib
 
 class PluginHandler(object):
     def __init__(self, name, pluginPath, format=None):
@@ -37,7 +38,7 @@ class PluginHandler(object):
             for moduleName in modulePath.split('.'):
                 currentModuleName += moduleName
                 #print('reloading: '+currentModuleName)
-                reload(sys.modules[currentModuleName])
+                importlib.reload(sys.modules[currentModuleName])
                 currentModuleName += '.'
 
         #print('modulePath: '+modulePath)

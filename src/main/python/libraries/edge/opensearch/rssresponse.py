@@ -36,7 +36,7 @@ class RssResponse(Response):
         document = Document()
         rss = document.createElement('rss')
         rss.setAttribute('version', '2.0')
-        for namespace in self.namespaces.keys():
+        for namespace in list(self.namespaces.keys()):
             rss.setAttribute('xmlns:'+namespace, self.namespaces[namespace])
         document.appendChild(rss)
 
@@ -122,5 +122,5 @@ class RssResponse(Response):
             else:
                 variableElement.appendChild(document.createTextNode(xml.sax.saxutils.escape(str(value))))
         if 'attribute' in itemEntry:
-            for attr in itemEntry['attribute'].keys():
+            for attr in list(itemEntry['attribute'].keys()):
                 variableElement.setAttribute(attr, itemEntry['attribute'][attr])

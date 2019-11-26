@@ -1,7 +1,7 @@
 import datetime
 import json
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.opensearch.templateresponse import TemplateResponse
 
@@ -36,19 +36,19 @@ class ESTemplateResponse(TemplateResponse):
 
 
         self.parameters['startIndex'] = start
-        self.variables['myself'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+        self.variables['myself'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)
 
         if rows != 0:
             self.parameters['startIndex'] = numFound - (numFound % rows)
-        self.variables['last'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+        self.variables['last'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)
 
         self.parameters['startIndex'] = 0
-        self.variables['first'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+        self.variables['first'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)
         if start > 0:
             if (start - rows > 0):
                 self.parameters['startIndex'] = start - rows
-            self.variables['prev'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+            self.variables['prev'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)
 
         if start + rows < numFound:
             self.parameters['startIndex'] = start + rows
-            self.variables['next'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+            self.variables['next'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)

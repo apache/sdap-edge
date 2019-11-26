@@ -21,7 +21,7 @@ class ProxyWriter(requestresponder.RequestResponder):
             self.requestHandler.write(str(response.error))
             self.requestHandler.finish()
         else:
-            for name, value in response.headers.iteritems():
+            for name, value in response.headers.items():
                 logging.debug('header: '+name+':'+value)
                 self.requestHandler.set_header(name, value)
             self.requestHandler.set_header('Access-Control-Allow-Origin', '*')

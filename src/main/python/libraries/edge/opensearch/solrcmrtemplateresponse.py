@@ -1,9 +1,9 @@
 import datetime
 import pycurl
-from StringIO import StringIO
+from io import StringIO
 import json
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import os.path
 
 from edge.opensearch.templateresponse import TemplateResponse
@@ -40,7 +40,7 @@ class SolrCmrTemplateResponse(TemplateResponse):
      
         # Format the output if there are errors.
         response = {}
-        if output.keys().__contains__('errors'):
+        if list(output.keys()).__contains__('errors'):
             response['entry'] = []
             response['updated'] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             response['id'] = url
@@ -54,26 +54,26 @@ class SolrCmrTemplateResponse(TemplateResponse):
 
         try:
 
-            if response.keys().__contains__('errors'):
+            if list(response.keys()).__contains__('errors'):
                 return(response)
     
-            if not(response.keys().__contains__('feed')):
+            if not(list(response.keys()).__contains__('feed')):
                 raise ValueError('no "feed" in the cmr response')
-            if not(response['feed'].keys().__contains__('entry')):
+            if not(list(response['feed'].keys()).__contains__('entry')):
                 raise ValueError('no "entry" in the cmr response')
-            if not(response['feed'].keys().__contains__('updated')):
+            if not(list(response['feed'].keys()).__contains__('updated')):
                 raise ValueError('no "updated" key in the cmr response')
-            if not(response['feed'].keys().__contains__('id')):
+            if not(list(response['feed'].keys()).__contains__('id')):
                 raise ValueError('no "id" key in the cmr response')
-            if not(response['feed'].keys().__contains__('title')):
+            if not(list(response['feed'].keys()).__contains__('title')):
                 raise ValueError('no "id" key in the cmr response')
       
             # Create lists if they do not exists.
-            if not(cmr.keys().__contains__('cmr_search_updated')):
+            if not(list(cmr.keys()).__contains__('cmr_search_updated')):
                 cmr['cmr_search_updated'] = []
-            if not(cmr.keys().__contains__('cmr_search_url')):
+            if not(list(cmr.keys()).__contains__('cmr_search_url')):
                 cmr['cmr_search_url'] = []
-            if not(cmr.keys().__contains__('cmr_search_title')):
+            if not(list(cmr.keys()).__contains__('cmr_search_title')):
                 cmr['cmr_search_title'] = []
 
             cmr['cmr_search_updated'].append(response['feed']['updated'])
@@ -85,13 +85,13 @@ class SolrCmrTemplateResponse(TemplateResponse):
                 entry = response['feed']['entry'][0]
                 for key in entry:
                     keyname = 'cmr_%s' %(key)
-                    if not(cmr.keys().__contains__(keyname)):
+                    if not(list(cmr.keys()).__contains__(keyname)):
                         cmr[keyname] = []
                     cmr[keyname].append(entry[key])
     
-        except ValueError, e:
+        except ValueError as e:
             msg = 'Error! parse error: %s.' %e
-            print '%s\n' %msg
+            print('%s\n' %msg)
     
         return(cmr)
 
@@ -128,7 +128,7 @@ class SolrCmrTemplateResponse(TemplateResponse):
                 # CMR: PRODUCT_TYPE
                 #------------------------------------------------------------------------------------------
 
-                if solrJson['response']['docs'][i].keys().__contains__('product_type_dataset_short_name_list'):
+                if list(solrJson['response']['docs'][i].keys()).__contains__('product_type_dataset_short_name_list'):
 
                     for j in range(len(doc['product_type_dataset_short_name_list'])):
 
@@ -153,8 +153,8 @@ class SolrCmrTemplateResponse(TemplateResponse):
                 # CMR: PRODUCT (Only search when the query contains 'id' - ie individual cmr search)
                 #------------------------------------------------------------------------------------------
 
-                elif solrJson['response']['docs'][i].keys().__contains__('product_granule_remote_granule_ur_list') and \
-                     self.parameters.keys().__contains__('id'):
+                elif list(solrJson['response']['docs'][i].keys()).__contains__('product_granule_remote_granule_ur_list') and \
+                     list(self.parameters.keys()).__contains__('id'):
 
                     for j in range(len(doc['product_granule_remote_granule_ur_list'])):
 
@@ -225,19 +225,19 @@ class SolrCmrTemplateResponse(TemplateResponse):
                 self.variables['facets'] = solrJson['facet_counts']
 
         self.parameters['startIndex'] = start
-        self.variables['myself'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+        self.variables['myself'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)
         
         if rows != 0:
             self.parameters['startIndex'] = numFound - (numFound % rows)
-        self.variables['last'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+        self.variables['last'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)
         
         self.parameters['startIndex'] = 0
-        self.variables['first'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+        self.variables['first'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)
         if start > 0:
             if (start - rows > 0):
                 self.parameters['startIndex'] = start - rows
-            self.variables['prev'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+            self.variables['prev'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)
             
         if start + rows < numFound:
             self.parameters['startIndex'] = start + rows
-            self.variables['next'] = self.link + '?' + urllib.urlencode(self.parameters, True)
+            self.variables['next'] = self.link + '?' + urllib.parse.urlencode(self.parameters, True)

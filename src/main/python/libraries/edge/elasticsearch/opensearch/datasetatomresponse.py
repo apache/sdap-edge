@@ -1,6 +1,6 @@
 import logging
 import datetime
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.elasticsearch.opensearch.atomresponsebyelasticsearch import AtomResponseByElasticsearch
 from edge.dateutility import DateUtility
@@ -26,16 +26,16 @@ class DatasetAtomResponse(AtomResponseByElasticsearch):
         item.append({'name': 'title', 'value': doc['_source']['title']})
         item.append({'name': 'content', 'value': doc['_source']['description']})
         
-        item.append({'name': 'link', 'attribute': {'href': self.url + self.searchBasePath + 'dataset?' + urllib.urlencode(dict([idTuple, ('full', 'true')])), 'rel': 'enclosure', 'type': 'application/atom+xml', 'title': 'GIBS Metadata' }})
+        item.append({'name': 'link', 'attribute': {'href': self.url + self.searchBasePath + 'dataset?' + urllib.parse.urlencode(dict([idTuple, ('full', 'true')])), 'rel': 'enclosure', 'type': 'application/atom+xml', 'title': 'GIBS Metadata' }})
         """
         item.append({'name': 'link', 'attribute': {'href': self.url + self.metadataBasePath + 'dataset?' + urllib.urlencode(dict([idTuple, ('format', 'iso')])), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'ISO-19115 Metadata' }})
         item.append({'name': 'link', 'attribute': {'href': self.url + self.metadataBasePath + 'dataset?' + urllib.urlencode(dict([idTuple, ('format', 'gcmd')])), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'GCMD Metadata' }})
         """
         #Only generate granule search link if dataset has granules
         if (doc['_source']['identifier'].lower() in self.datasets):
-            supportedGranuleParams = dict([(key,value) for key,value in self.parameters.iteritems() if key in ['bbox', 'startTime', 'endTime']])
+            supportedGranuleParams = dict([(key,value) for key,value in self.parameters.items() if key in ['bbox', 'startTime', 'endTime']])
             supportedGranuleParams['identifier'] = persistentId
-            item.append({'name': 'link', 'attribute': {'href': self.url + self.searchBasePath + 'granule?' + urllib.urlencode(supportedGranuleParams), 'rel': 'search', 'type': 'application/atom+xml', 'title': 'Product Search' }})
+            item.append({'name': 'link', 'attribute': {'href': self.url + self.searchBasePath + 'granule?' + urllib.parse.urlencode(supportedGranuleParams), 'rel': 'search', 'type': 'application/atom+xml', 'title': 'Product Search' }})
         """
         if 'Dataset-ImageUrl' in doc and doc['Dataset-ImageUrl'][0] != '':
             item.append({'name': 'link', 'attribute': {'href': doc['Dataset-ImageUrl'][0], 'rel': 'enclosure', 'type': 'image/jpg', 'title': 'Thumbnail' }})

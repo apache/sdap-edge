@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
 from edge.response.solrjsontemplateresponse import SolrJsonTemplateResponse
@@ -26,7 +26,7 @@ class Writer(SolrTemplateResponseWriter):
         queries = []
         filterQueries = []
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if key == 'id':
                 queries.append('id:' + self._urlEncodeSolrQueryValue(value))
             elif key == 'slcpShortName':
@@ -46,7 +46,7 @@ class Writer(SolrTemplateResponseWriter):
         if len(filterQueries) > 0:
             query += '&fq='+'+AND+'.join(filterQueries)
 
-        query += '&sort=' + urllib.quote("DATOrder desc,ShortName asc")
+        query += '&sort=' + urllib.parse.quote("DATOrder desc,ShortName asc")
 
         logging.debug('solr query: '+query)
 

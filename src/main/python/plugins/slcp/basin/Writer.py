@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
 from edge.response.solrjsontemplateresponse import SolrJsonTemplateResponse

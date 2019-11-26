@@ -1,5 +1,5 @@
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.opensearch.atomresponse import AtomResponse
 from collections import defaultdict
@@ -29,7 +29,7 @@ class AtomResponseBySolr(AtomResponse):
                 {'namespace': 'opensearch', 'name': 'itemsPerPage', 'value': 1}
             )
             self.parameters['startIndex'] = 0
-            url = self.link + '?' + urllib.urlencode(self.parameters)
+            url = self.link + '?' + urllib.parse.urlencode(self.parameters)
             self.variables.append({'name': 'link', 'attribute': {'href': url, 'rel': 'self', 'type': 'application/atom+xml'}})
             self.variables.append({'name': 'link', 'attribute': {'href': url, 'rel': 'first', 'type': 'application/atom+xml'}})
             item = [
@@ -45,16 +45,16 @@ class AtomResponseBySolr(AtomResponse):
             rows = int(solrJson['responseHeader']['params']['rows'])
 
             self.parameters['startIndex'] = start
-            self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'self', 'type': 'application/atom+xml'}})
+            self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'self', 'type': 'application/atom+xml'}})
             self.parameters['startIndex'] = 0
-            self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'first', 'type': 'application/atom+xml'}})
+            self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'first', 'type': 'application/atom+xml'}})
             if start > 0:
                 if (start - rows > 0):
                     self.parameters['startIndex'] = start - rows
-                self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'previous', 'type': 'application/atom+xml'}})
+                self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'previous', 'type': 'application/atom+xml'}})
             if start + rows < numFound:
                 self.parameters['startIndex'] = start + rows
-                self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'next', 'type': 'application/atom+xml'}})
+                self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'next', 'type': 'application/atom+xml'}})
             
             self.variables.append(
                 {'namespace': 'opensearch', 'name': 'totalResults', 'value': solrJson['response']['numFound']}
@@ -112,7 +112,7 @@ class AtomResponseBySolr(AtomResponse):
     def _populateItemWithPodaacMetadata(self, doc, item, multiValuedElementsKeys):
         ignoreElementsEndingWith = ('-Full', '-Long')
         multiValuedElements = defaultdict(list)
-        for docKey in doc.keys():
+        for docKey in list(doc.keys()):
             if docKey.startswith(multiValuedElementsKeys):
                 multiValuedElements[docKey.split('-', 1)[0]].append(docKey)
             elif not docKey.endswith(ignoreElementsEndingWith):

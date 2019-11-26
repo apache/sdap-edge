@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
 from edge.response.solrjsontemplateresponse import SolrJsonTemplateResponse
@@ -23,14 +23,14 @@ class Writer(SolrTemplateResponseWriter):
     def _constructSolrQuery(self, startIndex, entriesPerPage, parameters, facets):
         queries = []
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if value != "":
                 if key == 'keyword':
-                    queries.append(urllib.quote(value))
+                    queries.append(urllib.parse.quote(value))
                 elif key == 'necessity':
-                    queries.append("necessity:" + urllib.quote(value))
+                    queries.append("necessity:" + urllib.parse.quote(value))
                 elif key == 'source':
-                    queries.append("source_ss:\"" + urllib.quote(value) + "\"")
+                    queries.append("source_ss:\"" + urllib.parse.quote(value) + "\"")
 
         if len(queries) == 0:
             queries.append('*:*')

@@ -54,7 +54,7 @@ class ResponseBySolr(Response):
                 ]
                 """
                 item = []
-                for docKey in doc.keys():
+                for docKey in list(doc.keys()):
                     item.append({'namespace': 'podaac', 'name': docKey, 'value': doc[docKey]})
 
                 self._populateItem(solrResponse, doc, item)

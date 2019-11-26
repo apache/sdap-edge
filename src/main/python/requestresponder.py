@@ -1,10 +1,10 @@
 import logging
-import ConfigParser
+import configparser
 
 class RequestResponder(object):
     def __init__(self, configFilePath):
         #logging.debug('config: '+configFilePath)
-        self._configuration = ConfigParser.RawConfigParser()
+        self._configuration = configparser.RawConfigParser()
         self._configuration.read(configFilePath)
         self.requestHandler = None
 

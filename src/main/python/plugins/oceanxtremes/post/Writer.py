@@ -1,6 +1,6 @@
 import logging
-import urllib2
-import urlparse
+import urllib.request, urllib.error, urllib.parse
+import urllib.parse
 import uuid
 import json
 from datetime import datetime

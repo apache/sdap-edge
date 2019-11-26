@@ -19,7 +19,7 @@ class GranuleDatacastingResponse(DatacastingResponseBySolr):
         
         doc['GranuleLink'] = self._getLinkToGranule(doc)
         
-        doc['GranuleFileSize'] = dict(zip(doc['GranuleArchive-Type'], doc['GranuleArchive-FileSize']))
+        doc['GranuleFileSize'] = dict(list(zip(doc['GranuleArchive-Type'], doc['GranuleArchive-FileSize'])))
         
         if 'GranuleReference-Type' in doc:
             doc['GranuleReference'] = dict([(doc['GranuleReference-Type'][i], doc['GranuleReference-Path'][i]) for i,x in enumerate(doc['GranuleReference-Status']) if x=="ONLINE"])
@@ -28,7 +28,7 @@ class GranuleDatacastingResponse(DatacastingResponseBySolr):
         link = None
 
         if 'GranuleReference-Type' in doc and len(self.linkToGranule) > 0:
-            granuleRefDict = dict(zip(doc['GranuleReference-Type'], zip(doc['GranuleReference-Path'], doc['GranuleReference-Status'])))
+            granuleRefDict = dict(list(zip(doc['GranuleReference-Type'], list(zip(doc['GranuleReference-Path'], doc['GranuleReference-Status'])))))
 
             for type in self.linkToGranule:
                 # check if reference type exists

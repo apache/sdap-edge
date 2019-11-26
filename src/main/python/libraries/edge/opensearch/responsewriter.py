@@ -1,6 +1,6 @@
 from types import *
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 import requestresponder
 from edge.httputility import HttpUtility
@@ -31,7 +31,7 @@ class ResponseWriter(requestresponder.RequestResponder):
     
     def _constructSingleSolrDatasetQuery(self, variables):
         queries = []
-        for key, value in variables.iteritems():
+        for key, value in variables.items():
             # Only key used for ISO granule record is dataset
             if key == 'datasetId':
                 query = 'Dataset-PersistentId:'+self._urlEncodeSolrQueryValue(value)
@@ -56,7 +56,7 @@ class ResponseWriter(requestresponder.RequestResponder):
         return httpUtility.getResponse(url+'/select/?'+query, callback)
     
     def _urlEncodeSolrQueryValue(self, value):
-        return urllib.quote('"'+value+'"')
+        return urllib.parse.quote('"'+value+'"')
     
     def _constructBoundingBoxQuery(self, value):
         coords = value.split(",")

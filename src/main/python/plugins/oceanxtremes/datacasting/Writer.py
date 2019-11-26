@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
@@ -32,12 +32,12 @@ class Writer(SolrTemplateResponseWriter):
         start = '*'
         end = '*'
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if value != "":
                 if key == 'keyword':
-                    queries.append(urllib.quote(value))
+                    queries.append(urllib.parse.quote(value))
                 elif key == 'shortName':
-                    queries.append("primary_dataset_short_name:" + urllib.quote(value))
+                    queries.append("primary_dataset_short_name:" + urllib.parse.quote(value))
 
         if len(queries) == 0:
             queries.append('*:*')
@@ -49,13 +49,13 @@ class Writer(SolrTemplateResponseWriter):
         
         if self.facet:
             query += '&rows=0&facet=true&facet.limit=-1&facet.mincount=1&'
-            query += '&'.join(['facet.field=' + facet for facet in self.facetDefs.values()])
+            query += '&'.join(['facet.field=' + facet for facet in list(self.facetDefs.values())])
         else:
             query += '&start='+str(startIndex)+'&rows='+str(entriesPerPage)
             if sort is not None:
-                query += '&sort=' + urllib.quote(sort + ' ' + sortDir + ",InternalVersion desc")
+                query += '&sort=' + urllib.parse.quote(sort + ' ' + sortDir + ",InternalVersion desc")
             else:
-                query += '&sort=' + urllib.quote("submit_date desc")
+                query += '&sort=' + urllib.parse.quote("submit_date desc")
 
         logging.debug('solr query: '+query)
 
