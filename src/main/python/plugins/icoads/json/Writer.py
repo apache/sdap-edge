@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
 from edge.response.solrjsontemplateresponse import SolrJsonTemplateResponse
@@ -24,17 +24,17 @@ class Writer(SolrTemplateResponseWriter):
 
     def _constructSolrQuery(self, startIndex, entriesPerPage, parameters, facets):
         # if no QC flag is given, default to only good
-        if not "qualityFlag" in parameters.keys():
+        if not "qualityFlag" in list(parameters.keys()):
             parameters['qualityFlag'] = 1
 
         queries = []
         filterQueries = []
         sort = None
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if value != "":
                 if key == 'keyword':
-                    queries.append(urllib.quote(value))
+                    queries.append(urllib.parse.quote(value))
                 elif key == 'startTime':
                     filterQueries.append('time:['+value+'%20TO%20*]')
                 elif key == 'endTime':

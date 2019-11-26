@@ -67,16 +67,16 @@ class FgdcResponseBySolr(FgdcResponse):
                 self.variables['UniqueDatasetSensor'] = {}
                 for i, x in enumerate(doc['DatasetSource-Sensor-ShortName']):
                     self.variables['UniqueDatasetSensor'][x] = i
-                self.variables['UniqueDatasetSensor'] = self.variables['UniqueDatasetSensor'].values()
+                self.variables['UniqueDatasetSensor'] = list(self.variables['UniqueDatasetSensor'].values())
                 
                 # Create list of unique dataset source
                 self.variables['UniqueDatasetSource'] = {}
                 for i, x in enumerate(doc['DatasetSource-Source-ShortName']):
                     self.variables['UniqueDatasetSource'][x] = i
-                self.variables['UniqueDatasetSource'] = self.variables['UniqueDatasetSource'].values()
+                self.variables['UniqueDatasetSource'] = list(self.variables['UniqueDatasetSource'].values())
                 
                 # Create dictionary for dataset_resource
-                self.variables['DatasetResource'] = dict(zip(doc['DatasetResource-Type'], doc['DatasetResource-Path']))
+                self.variables['DatasetResource'] = dict(list(zip(doc['DatasetResource-Type'], doc['DatasetResource-Path'])))
                 
                 # Get index of dataset Technical Contact
                 self.variables['TechnicalContactIndex'] = -1

@@ -15,7 +15,7 @@ class Writer(SolrTemplateResponseWriter):
 
     def _generateOpenSearchResponse(self, solrResponse, searchText, searchUrl, searchParams, pretty):
 
-        print "iso product:seachParams = [%s]\n" %searchParams
+        print("iso product:seachParams = [%s]\n" %searchParams)
 
         response = SolrTemplateResponse(self._configuration, searchUrl, searchParams)
         response.setTemplate(self.template)
@@ -25,7 +25,7 @@ class Writer(SolrTemplateResponseWriter):
     def _constructSolrQuery(self, startIndex, entriesPerPage, parameters, facets):
         queries = []
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if key == 'id':
                 queries.append('id:' + self._urlEncodeSolrQueryValue(value))
             elif key == 'title':

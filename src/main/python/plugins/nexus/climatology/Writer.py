@@ -1,5 +1,5 @@
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.genericproxywriter import GenericProxyWriter
 

@@ -1,4 +1,4 @@
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from edge.opensearch.rssresponsebysolr import RssResponseBySolr
 from edge.dateutility import DateUtility
 
@@ -25,24 +25,24 @@ class DatasetRssResponse(RssResponseBySolr):
         item.append({'name': 'description', 'value': doc['Dataset-Description'][0]})
         item.append({'name': 'link', 'value': portalUrl})
         
-        item.append({'name': 'enclosure', 'attribute': {'url': self.url + self.searchBasePath + 'dataset?' + urllib.urlencode(dict([idTuple, ('full', 'true'), ('format', 'rss')])), 'type': 'application/rss+xml', 'length': '0'}})
-        item.append({'name': 'enclosure', 'attribute': {'url': self.url + self.metadataBasePath + 'dataset?' + urllib.urlencode(dict([idTuple, ('format', 'iso')])), 'type': 'text/xml', 'length': '0'}})
-        item.append({'name': 'enclosure', 'attribute': {'url': self.url + self.metadataBasePath + 'dataset?' + urllib.urlencode(dict([idTuple, ('format', 'gcmd')])), 'type': 'text/xml', 'length': '0'}})
+        item.append({'name': 'enclosure', 'attribute': {'url': self.url + self.searchBasePath + 'dataset?' + urllib.parse.urlencode(dict([idTuple, ('full', 'true'), ('format', 'rss')])), 'type': 'application/rss+xml', 'length': '0'}})
+        item.append({'name': 'enclosure', 'attribute': {'url': self.url + self.metadataBasePath + 'dataset?' + urllib.parse.urlencode(dict([idTuple, ('format', 'iso')])), 'type': 'text/xml', 'length': '0'}})
+        item.append({'name': 'enclosure', 'attribute': {'url': self.url + self.metadataBasePath + 'dataset?' + urllib.parse.urlencode(dict([idTuple, ('format', 'gcmd')])), 'type': 'text/xml', 'length': '0'}})
         
         #Only generate granule search link if dataset has granules
         if (doc['Dataset-ShortName'][0] in self.datasets):
-            supportedGranuleParams = dict([(key,value) for key,value in self.parameters.iteritems() if key in ['bbox', 'startTime', 'endTime', 'format']])
+            supportedGranuleParams = dict([(key,value) for key,value in self.parameters.items() if key in ['bbox', 'startTime', 'endTime', 'format']])
             if persistentId == '':
                 supportedGranuleParams['shortName'] = doc['Dataset-ShortName'][0]
             else:
                 supportedGranuleParams['datasetId'] = persistentId
-            item.append({'name': 'enclosure', 'attribute': {'url': self.url + self.searchBasePath + 'granule?' + urllib.urlencode(supportedGranuleParams), 'type': 'application/rss+xml', 'length': '0'}})
+            item.append({'name': 'enclosure', 'attribute': {'url': self.url + self.searchBasePath + 'granule?' + urllib.parse.urlencode(supportedGranuleParams), 'type': 'application/rss+xml', 'length': '0'}})
         
         if 'Dataset-ImageUrl' in doc and doc['Dataset-ImageUrl'][0] != '':
             item.append({'name': 'enclosure', 'attribute': {'url': doc['Dataset-ImageUrl'][0], 'type': 'image/jpg', 'length': '0'}})
         
         if 'DatasetLocationPolicy-Type' in doc and 'DatasetLocationPolicy-BasePath' in doc:
-            url = dict(zip(doc['DatasetLocationPolicy-Type'], doc['DatasetLocationPolicy-BasePath']))
+            url = dict(list(zip(doc['DatasetLocationPolicy-Type'], doc['DatasetLocationPolicy-BasePath'])))
             if 'LOCAL-OPENDAP' in url:
                 item.append({'name': 'enclosure', 'attribute': {'url': url['LOCAL-OPENDAP'], 'type': 'text/html', 'length': '0'}})
             elif 'REMOTE-OPENDAP' in url:

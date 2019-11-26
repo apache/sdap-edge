@@ -1,5 +1,5 @@
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.opensearch.atomresponse import AtomResponse
 from collections import defaultdict
@@ -27,7 +27,7 @@ class AtomResponseByElasticsearch(AtomResponse):
                 {'namespace': 'opensearch', 'name': 'itemsPerPage', 'value': 1}
             )
             self.parameters['startIndex'] = 0
-            url = self.link + '?' + urllib.urlencode(self.parameters)
+            url = self.link + '?' + urllib.parse.urlencode(self.parameters)
             self.variables.append({'name': 'link', 'attribute': {'href': url, 'rel': 'self', 'type': 'application/atom+xml'}})
             self.variables.append({'name': 'link', 'attribute': {'href': url, 'rel': 'first', 'type': 'application/atom+xml'}})
             item = [
@@ -43,16 +43,16 @@ class AtomResponseByElasticsearch(AtomResponse):
             rows = int(self.parameters['itemsPerPage'])
 
             self.parameters['startIndex'] = start
-            self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'self', 'type': 'application/atom+xml'}})
+            self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'self', 'type': 'application/atom+xml'}})
             self.parameters['startIndex'] = 0
-            self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'first', 'type': 'application/atom+xml'}})
+            self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'first', 'type': 'application/atom+xml'}})
             if start > 0:
                 if (start - rows > 0):
                     self.parameters['startIndex'] = start - rows
-                self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'previous', 'type': 'application/atom+xml'}})
+                self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'previous', 'type': 'application/atom+xml'}})
             if start + rows < numFound:
                 self.parameters['startIndex'] = start + rows
-                self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'next', 'type': 'application/atom+xml'}})
+                self.variables.append({'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'next', 'type': 'application/atom+xml'}})
             
             self.variables.append(
                 {'namespace': 'opensearch', 'name': 'totalResults', 'value': numFound}
@@ -76,11 +76,11 @@ class AtomResponseByElasticsearch(AtomResponse):
         pass
     
     def _populateItemWithAllMetadata(self, doc, item):
-        for docKey in doc.keys():
+        for docKey in list(doc.keys()):
             if isinstance(doc[docKey], list):
                 for child in doc[docKey]:
                     childItem = []
-                    for childKey in child.keys():
+                    for childKey in list(child.keys()):
                         childItem.append({'namespace': 'gibs', 'name': childKey, 'value': child[childKey]})
                     item.append({'namespace': 'gibs', 'name': docKey, 'value': childItem})
             else:

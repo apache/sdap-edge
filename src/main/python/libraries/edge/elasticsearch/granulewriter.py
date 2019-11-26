@@ -1,6 +1,6 @@
 from types import *
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 
 from edge.opensearch.responsewriter import ResponseWriter
@@ -86,7 +86,7 @@ class GranuleWriter(ResponseWriter):
         sort='desc'
         filterQuery = None
         queries = []
-        for key, value in variables.iteritems():
+        for key, value in variables.items():
             #query = ''
             if key == 'startTime':
                 startTime = DateUtility.convertISOToUTCTimestamp(value)
@@ -101,7 +101,7 @@ class GranuleWriter(ResponseWriter):
                     query += '[* TO '+str(stopTime)+']'
                     queries.append(query)
             elif key == 'keyword':
-                newValue = urllib.quote(value)
+                newValue = urllib.parse.quote(value)
 
                 query = 'SearchableText-LowerCased:('+newValue+')'
                 queries.append(query)
@@ -124,7 +124,7 @@ class GranuleWriter(ResponseWriter):
                 startIndex = 0
             elif key == 'sortBy':
                 sortByMapping = {'timeAsc': 'asc'}
-                if value in sortByMapping.keys():
+                if value in list(sortByMapping.keys()):
                     sort = sortByMapping[value]
             elif key == 'bbox':
                 filterQuery = self._constructBoundingBoxQuery(value)

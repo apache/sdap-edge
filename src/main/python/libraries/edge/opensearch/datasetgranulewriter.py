@@ -1,8 +1,8 @@
 from types import *
 import logging
-import urllib
-import urlparse
-import httplib
+import urllib.request, urllib.parse, urllib.error
+import urllib.parse
+import http.client
 from xml.dom.minidom import Document
 import json
 import xml.sax.saxutils
@@ -129,7 +129,7 @@ class DatasetGranuleWriter(ResponseWriter):
         #set default sort order
         sort='Granule-StartTimeLong+desc'
         queries = []
-        for key, value in variables.iteritems():
+        for key, value in variables.items():
             #query = ''
             if key == 'startTime':
                 startTime = DateUtility.convertISOToUTCTimestamp(value)
@@ -144,7 +144,7 @@ class DatasetGranuleWriter(ResponseWriter):
                     query += '[*%20TO%20'+str(stopTime)+']'
                     queries.append(query)
             elif key == 'keyword':
-                newValue = urllib.quote(value)
+                newValue = urllib.parse.quote(value)
 
                 query = 'SearchableText-LowerCased:('+newValue+')'
                 queries.append(query)
@@ -167,7 +167,7 @@ class DatasetGranuleWriter(ResponseWriter):
                 startIndex = 0
             elif key == 'sortBy':
                 sortByMapping = {'timeAsc': 'Granule-StartTimeLong+asc', 'archiveTimeDesc': 'Granule-ArchiveTimeLong+desc'}
-                if value in sortByMapping.keys():
+                if value in list(sortByMapping.keys()):
                     sort = sortByMapping[value]
             elif key == 'archiveTime':
                 query = 'Granule-ArchiveTimeLong:['+str(value)+'%20TO%20*]'

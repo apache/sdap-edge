@@ -20,7 +20,7 @@ class GranuleIsoResponse(IsoResponseBySolr):
         link = None
 
         if 'GranuleReference-Type' in doc and len(self.linkToGranule) > 0:
-            granuleRefDict = dict(zip(doc['GranuleReference-Type'], zip(doc['GranuleReference-Path'], doc['GranuleReference-Status'])))
+            granuleRefDict = dict(list(zip(doc['GranuleReference-Type'], list(zip(doc['GranuleReference-Path'], doc['GranuleReference-Status'])))))
 
             for type in self.linkToGranule:
                 # check if reference type exists

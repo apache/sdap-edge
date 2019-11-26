@@ -1,5 +1,5 @@
 import datetime
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.opensearch.atomresponsebysolr import AtomResponseBySolr
 from edge.dateutility import DateUtility
@@ -23,24 +23,24 @@ class DatasetAtomResponse(AtomResponseBySolr):
         item.append({'name': 'title', 'value': doc['Dataset-LongName'][0]})
         item.append({'name': 'content', 'value': doc['Dataset-Description'][0]})
         
-        item.append({'name': 'link', 'attribute': {'href': self.url + self.searchBasePath + 'dataset?' + urllib.urlencode(dict([idTuple, ('full', 'true')])), 'rel': 'enclosure', 'type': 'application/atom+xml', 'title': 'PO.DAAC Metadata' }})
-        item.append({'name': 'link', 'attribute': {'href': self.url + self.metadataBasePath + 'dataset?' + urllib.urlencode(dict([idTuple, ('format', 'iso')])), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'ISO-19115 Metadata' }})
-        item.append({'name': 'link', 'attribute': {'href': self.url + self.metadataBasePath + 'dataset?' + urllib.urlencode(dict([idTuple, ('format', 'gcmd')])), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'GCMD Metadata' }})
+        item.append({'name': 'link', 'attribute': {'href': self.url + self.searchBasePath + 'dataset?' + urllib.parse.urlencode(dict([idTuple, ('full', 'true')])), 'rel': 'enclosure', 'type': 'application/atom+xml', 'title': 'PO.DAAC Metadata' }})
+        item.append({'name': 'link', 'attribute': {'href': self.url + self.metadataBasePath + 'dataset?' + urllib.parse.urlencode(dict([idTuple, ('format', 'iso')])), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'ISO-19115 Metadata' }})
+        item.append({'name': 'link', 'attribute': {'href': self.url + self.metadataBasePath + 'dataset?' + urllib.parse.urlencode(dict([idTuple, ('format', 'gcmd')])), 'rel': 'enclosure', 'type': 'text/xml', 'title': 'GCMD Metadata' }})
         
         #Only generate granule search link if dataset has granules
         if (doc['Dataset-ShortName'][0] in self.datasets):
-            supportedGranuleParams = dict([(key,value) for key,value in self.parameters.iteritems() if key in ['bbox', 'startTime', 'endTime']])
+            supportedGranuleParams = dict([(key,value) for key,value in self.parameters.items() if key in ['bbox', 'startTime', 'endTime']])
             if persistentId == '':
                 supportedGranuleParams['shortName'] = doc['Dataset-ShortName'][0]
             else:
                 supportedGranuleParams['datasetId'] = persistentId
-            item.append({'name': 'link', 'attribute': {'href': self.url + self.searchBasePath + 'granule?' + urllib.urlencode(supportedGranuleParams), 'rel': 'search', 'type': 'application/atom+xml', 'title': 'Granule Search' }})
+            item.append({'name': 'link', 'attribute': {'href': self.url + self.searchBasePath + 'granule?' + urllib.parse.urlencode(supportedGranuleParams), 'rel': 'search', 'type': 'application/atom+xml', 'title': 'Granule Search' }})
         
         if 'Dataset-ImageUrl' in doc and doc['Dataset-ImageUrl'][0] != '':
             item.append({'name': 'link', 'attribute': {'href': doc['Dataset-ImageUrl'][0], 'rel': 'enclosure', 'type': 'image/jpg', 'title': 'Thumbnail' }})
         
         if 'DatasetLocationPolicy-Type' in doc and 'DatasetLocationPolicy-BasePath' in doc:
-            url = dict(zip(doc['DatasetLocationPolicy-Type'], doc['DatasetLocationPolicy-BasePath']))
+            url = dict(list(zip(doc['DatasetLocationPolicy-Type'], doc['DatasetLocationPolicy-BasePath'])))
             if 'LOCAL-OPENDAP' in url:
                 item.append({'name': 'link', 'attribute': {'href': url['LOCAL-OPENDAP'], 'rel': 'enclosure', 'type': 'text/html', 'title': 'OPeNDAP URL' }})
             elif 'REMOTE-OPENDAP' in url:

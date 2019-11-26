@@ -1,5 +1,5 @@
 import json
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.opensearch.rssresponse import RssResponse
 from collections import defaultdict
@@ -29,7 +29,7 @@ class RssResponseBySolr(RssResponse):
                 {'namespace': 'opensearch', 'name': 'itemsPerPage', 'value': 1}
             )
             self.parameters['startIndex'] = 0
-            url = self.link + '?' + urllib.urlencode(self.parameters)
+            url = self.link + '?' + urllib.parse.urlencode(self.parameters)
             self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': url, 'rel': 'self', 'type': 'application/rss+xml'}})
             self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': url, 'rel': 'first', 'type': 'application/rss+xml'}})
             item = [
@@ -45,16 +45,16 @@ class RssResponseBySolr(RssResponse):
             rows = int(solrJson['responseHeader']['params']['rows'])
 
             self.parameters['startIndex'] = start
-            self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'self', 'type': 'application/rss+xml'}})
+            self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'self', 'type': 'application/rss+xml'}})
             self.parameters['startIndex'] = 0
-            self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'first', 'type': 'application/rss+xml'}})
+            self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'first', 'type': 'application/rss+xml'}})
             if start > 0:
                 if (start - rows > 0):
                     self.parameters['startIndex'] = start - rows
-                self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'previous', 'type': 'application/rss+xml'}})
+                self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'previous', 'type': 'application/rss+xml'}})
             if start + rows < numFound:
                 self.parameters['startIndex'] = start + rows
-                self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': self.link + '?' + urllib.urlencode(self.parameters), 'rel': 'next', 'type': 'application/rss+xml'}})
+                self.variables.append({'namespace': 'atom', 'name': 'link', 'attribute': {'href': self.link + '?' + urllib.parse.urlencode(self.parameters), 'rel': 'next', 'type': 'application/rss+xml'}})
             
             self.variables.append(
                 {'namespace': 'opensearch', 'name': 'totalResults', 'value': solrJson['response']['numFound']}
@@ -112,7 +112,7 @@ class RssResponseBySolr(RssResponse):
     def _populateItemWithPodaacMetadata(self, doc, item, multiValuedElementsKeys):
         ignoreElementsEndingWith = ('-Full', '-Long')
         multiValuedElements = defaultdict(list)
-        for docKey in doc.keys():
+        for docKey in list(doc.keys()):
             if docKey.startswith(multiValuedElementsKeys):
                 multiValuedElements[docKey.split('-', 1)[0]].append(docKey)
             elif not docKey.endswith(ignoreElementsEndingWith):

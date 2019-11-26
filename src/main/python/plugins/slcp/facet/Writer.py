@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
 from edge.response.solrfacettemplateresponse import SolrFacetTemplateResponse
@@ -27,10 +27,10 @@ class Writer(SolrTemplateResponseWriter):
         queries = []
         filterQueries = []
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if value != "":
                 if key == 'keyword':
-                    queries.append(urllib.quote(value))
+                    queries.append(urllib.parse.quote(value))
                 elif key == 'startTime':
                     queries.append('EndingDateTime-Internal:['+value+'%20TO%20*]')
                 elif key == 'endTime':
@@ -41,7 +41,7 @@ class Writer(SolrTemplateResponseWriter):
                 elif key == 'concept_id':
                     queries.append('concept-id:' + self._urlEncodeSolrQueryValue(value))
 
-        for key, value in facets.iteritems():
+        for key, value in facets.items():
             tagKey = '{!tag=' + key + '}' + key
             if type(value) is list:
                 if (len(value) == 1):
@@ -61,7 +61,7 @@ class Writer(SolrTemplateResponseWriter):
         
         if self.facet:
             query += '&rows=0&facet=true&facet.limit=-1&'
-            query += '&'.join(['facet.field={!ex=' + facet +'}' + facet if facet in facets else 'facet.field=' + facet for facet in self.facetDefs.values()])
+            query += '&'.join(['facet.field={!ex=' + facet +'}' + facet if facet in facets else 'facet.field=' + facet for facet in list(self.facetDefs.values())])
         else:
             query += '&start='+str(startIndex)+'&rows='+str(entriesPerPage)
 

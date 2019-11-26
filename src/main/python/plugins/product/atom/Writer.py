@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
 from edge.opensearch.solrcmrtemplateresponse import SolrCmrTemplateResponse
@@ -26,10 +26,10 @@ class Writer(SolrTemplateResponseWriter):
         queries = []
         filterQueries = []
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if key == 'keyword':
                 logging.debug('product/atom/Writer.py: keyword='+value)
-                queries.append(urllib.quote(value))
+                queries.append(urllib.parse.quote(value))
             elif key == 'product_pt_id':
                 filterQueries.append(key + ':' + self._urlEncodeSolrQueryValue(value))
             elif key == 'startTime':
@@ -42,7 +42,7 @@ class Writer(SolrTemplateResponseWriter):
             elif key == 'id':
                 queries.append('id:' + self._urlEncodeSolrQueryValue(value))
 
-        for key, value in facets.iteritems():
+        for key, value in facets.items():
             if type(value) is list:
                 if (len(value) == 1):
                     filterQueries.append(key + ':' + self._urlEncodeSolrQueryValue(value[0]))

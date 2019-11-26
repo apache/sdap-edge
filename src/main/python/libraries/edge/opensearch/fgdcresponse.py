@@ -31,7 +31,7 @@ class FgdcResponse(Response):
             tree = xml.etree.ElementTree.fromstring(fgdcStr)
             self._indent(tree)
             
-            for namespace in self.namespaces.keys():
+            for namespace in list(self.namespaces.keys()):
                 xml.etree.ElementTree.register_namespace(namespace, self.namespaces[namespace])
             
             return xmlDeclaration + xml.etree.ElementTree.tostring(tree, encoding='utf-8')

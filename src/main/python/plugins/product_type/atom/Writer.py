@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
 from edge.opensearch.solrcmrtemplateresponse import SolrCmrTemplateResponse
@@ -15,7 +15,7 @@ class Writer(SolrTemplateResponseWriter):
         self.template = self._readTemplate(templatePath)
 
     def _generateOpenSearchResponse(self, solrResponse, searchText, searchUrl, searchParams, pretty):
-        print "product_type:seachParams = [%s]\n" %searchParams
+        print("product_type:seachParams = [%s]\n" %searchParams)
         response = SolrCmrTemplateResponse(self._configuration, searchUrl, searchParams)
         response.setTemplate(self.template)
         response.variables['serviceUrl'] = self._configuration.get('service', 'url')
@@ -26,9 +26,9 @@ class Writer(SolrTemplateResponseWriter):
         queries = []
         filterQueries = []
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if key == 'keyword':
-                queries.append(urllib.quote(value))
+                queries.append(urllib.parse.quote(value))
             elif key == 'layers' and value == 'true':
                 filterQueries.append('-product_type_identifier:*_SRC')
             elif key == 'layers' and value == 'false':
@@ -45,7 +45,7 @@ class Writer(SolrTemplateResponseWriter):
             elif key == 'id':
                 queries.append('id:' + self._urlEncodeSolrQueryValue(value))
 
-        for key, value in facets.iteritems():
+        for key, value in facets.items():
             if type(value) is list:
                 if (len(value) == 1):
                     filterQueries.append(key + ':' + self._urlEncodeSolrQueryValue(value[0]))

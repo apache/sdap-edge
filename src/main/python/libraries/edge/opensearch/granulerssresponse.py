@@ -1,4 +1,4 @@
-import urllib
+import urllib.request, urllib.parse, urllib.error
 from edge.opensearch.rssresponsebysolr import RssResponseBySolr
 from edge.dateutility import DateUtility
 
@@ -37,12 +37,12 @@ class GranuleRssResponse(RssResponseBySolr):
         parameters = {'datasetId': doc['Dataset-PersistentId'][0], 'granuleName': doc['Granule-Name'][0]}
         parameters['full'] = 'true'
         parameters['format'] = 'rss'
-        item.append({'name': 'enclosure', 'attribute': {'url': self.url+self.searchBasePath + 'granule?' + urllib.urlencode(parameters), 'type': 'application/rss+xml', 'length': '0'}})
+        item.append({'name': 'enclosure', 'attribute': {'url': self.url+self.searchBasePath + 'granule?' + urllib.parse.urlencode(parameters), 'type': 'application/rss+xml', 'length': '0'}})
         del parameters['full']
         parameters['format'] = 'iso'
-        item.append({'name': 'enclosure', 'attribute': {'url': self.url+self.metadataBasePath + 'granule?' +  urllib.urlencode(parameters), 'type': 'text/xml', 'length': '0'}})
+        item.append({'name': 'enclosure', 'attribute': {'url': self.url+self.metadataBasePath + 'granule?' +  urllib.parse.urlencode(parameters), 'type': 'text/xml', 'length': '0'}})
         parameters['format'] = 'fgdc'
-        item.append({'name': 'enclosure', 'attribute': {'url': self.url+self.metadataBasePath + 'granule?' +  urllib.urlencode(parameters), 'type': 'text/xml', 'length': '0'}})
+        item.append({'name': 'enclosure', 'attribute': {'url': self.url+self.metadataBasePath + 'granule?' +  urllib.parse.urlencode(parameters), 'type': 'text/xml', 'length': '0'}})
         
         if 'GranuleReference-Type' in doc:
             if 'Granule-DataFormat' in doc:
@@ -80,7 +80,7 @@ class GranuleRssResponse(RssResponseBySolr):
         link = None
 
         if 'GranuleReference-Type' in doc and len(self.linkToGranule) > 0:
-            granuleRefDict = dict(zip(doc['GranuleReference-Type'], zip(doc['GranuleReference-Path'], doc['GranuleReference-Status'])))
+            granuleRefDict = dict(list(zip(doc['GranuleReference-Type'], list(zip(doc['GranuleReference-Path'], doc['GranuleReference-Status'])))))
 
             for type in self.linkToGranule:
                 # check if reference type exists

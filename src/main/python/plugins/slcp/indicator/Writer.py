@@ -1,5 +1,5 @@
 import logging
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import json
 
 from edge.writer.proxywriter import ProxyWriter
@@ -23,7 +23,7 @@ class Writer(ProxyWriter):
                 parameters['fl'] = 'xLatest,yLatest,unit,abbrUnit,updated_at'
         except:
             pass
-        url += '/select?' + urllib.urlencode(parameters)
+        url += '/select?' + urllib.parse.urlencode(parameters)
         logging.debug("proxy to url : " + url)
         return url
 
@@ -33,7 +33,7 @@ class Writer(ProxyWriter):
             self.requestHandler.write(str(response.error))
             self.requestHandler.finish()
         else:
-            for name, value in response.headers.iteritems():
+            for name, value in response.headers.items():
                 logging.debug('header: '+name+':'+value)
                 self.requestHandler.set_header(name, value)
             self.requestHandler.set_header('Access-Control-Allow-Origin', '*')

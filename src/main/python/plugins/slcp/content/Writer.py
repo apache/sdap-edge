@@ -1,7 +1,7 @@
 import logging
 import os
 import os.path
-import urllib
+import urllib.request, urllib.parse, urllib.error
 
 from edge.writer.solrtemplateresponsewriter import SolrTemplateResponseWriter
 from edge.response.solrjsontemplateresponse import SolrJsonTemplateResponse
@@ -28,14 +28,14 @@ class Writer(SolrTemplateResponseWriter):
         filterQueries.append('status:1')
         sort = None
 
-        for key, value in parameters.iteritems():
+        for key, value in parameters.items():
             if value != "":
                 if key == 'keyword':
                     #Special case keyword search on glossary_items only match title
                     if 'table' in parameters and parameters['table'] == 'glossary_items':
-                        queries.append('title_t:('+urllib.quote(value) + ')')
+                        queries.append('title_t:('+urllib.parse.quote(value) + ')')
                     else:
-                        queries.append(urllib.quote(value))
+                        queries.append(urllib.parse.quote(value))
                 elif key == 'year':
                     start = value + "-01-01T00:00:00.000Z"
                     end = value + "-12-31T23:59:59.999Z"
@@ -46,7 +46,7 @@ class Writer(SolrTemplateResponseWriter):
                     range = value.lower().split('-')
                     filterQueries.append('{!frange%20l=' + range[0] + '%20u=' + range[1] + 'z}' + 'title_lc')
                 elif key == 'sort':
-                    sort = urllib.quote(value)
+                    sort = urllib.parse.quote(value)
                 elif key == 'topic_id':
                     filterQueries.append('categories_id:' + value)
                 elif key == 'mission_id':
